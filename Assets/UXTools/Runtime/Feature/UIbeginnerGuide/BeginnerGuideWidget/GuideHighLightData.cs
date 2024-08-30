@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//高亮数据脚本
 [System.Serializable]
 public class GuideHighLightData : GuideWidgetData
 {

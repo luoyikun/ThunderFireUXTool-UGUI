@@ -1,4 +1,5 @@
 using UnityEngine;
+//∫Ïµ„UI∂‘œÛ
 public class Reddot : MonoBehaviour
 {
     [SerializeField]

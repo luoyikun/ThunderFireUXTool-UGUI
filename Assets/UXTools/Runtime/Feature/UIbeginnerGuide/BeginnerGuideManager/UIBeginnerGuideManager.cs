@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// 新手引导管理器
+/// </summary>
 public class UIBeginnerGuideManager : MonoBehaviour
 {
     private static UIBeginnerGuideManager instance;
@@ -15,10 +18,10 @@ public class UIBeginnerGuideManager : MonoBehaviour
     }
     public bool isPreviewing;
 
-    private List<UIBeginnerGuideDataList> guideDataList = new List<UIBeginnerGuideDataList>();
-    private UIBeginnerGuideDataList curGuideList;
-    private UIBeginnerGuideData curGuideData;
-    private UIBeginnerGuide curGuide;
+    private List<UIBeginnerGuideDataList> guideDataList = new List<UIBeginnerGuideDataList>();//N组引导
+    private UIBeginnerGuideDataList curGuideList;// 一组引导，包含一组UIBeginnerGuideData的引导列表，列表中的某个引导完成后，会自动开启列表中的下一个引导，直到整个引导列表完成
+    private UIBeginnerGuideData curGuideData; //一组引导中的一个，记录UIBeginnerGuide中的各种数据。包括引导ID、引导类型、引导时长、引导模板，以及UIBeginnerGuide中包含的GuideWidgetData
+    private UIBeginnerGuide curGuide;//一个引导的界面模板，界面上包含多种不同的GuideWidget
     private string targetID;
 
     // private bool guideShowing = false;
@@ -32,6 +35,12 @@ public class UIBeginnerGuideManager : MonoBehaviour
     {
         instance = null;
     }
+
+    // 描述：设置下一个引导列表从名字为id的引导项开始引导
+    // 所属类：UIBeginnerGuideManager
+    // 参数：
+    //     id 下次播放引导时播放的id
+    // 返回值:无
     public void SetGuideID(string id)
     {
         if (isPreviewing)
@@ -40,6 +49,11 @@ public class UIBeginnerGuideManager : MonoBehaviour
         }
         targetID = id;
     }
+    // 描述：向引导列表队列中添加一个引导
+    // 所属类：UIBeginnerGuideManager
+    // 参数：
+    //     datalist 要添加的引导对象
+    // 返回值:无
     public void AddGuideList(UIBeginnerGuideDataList datalist)
     {
         if (isPreviewing)
@@ -56,6 +70,8 @@ public class UIBeginnerGuideManager : MonoBehaviour
 
         //ShowGuideList(datalist);
     }
+
+    //清除N组引导
     public void ClearGuideList()
     {
         guideDataList.Clear();
@@ -64,6 +80,11 @@ public class UIBeginnerGuideManager : MonoBehaviour
     {
         guideDataList.Remove(dataList);
     }
+
+    // 描述：播放第一个引导列表
+    // 所属类：UIBeginnerGuideManager
+    // 参数：无
+    // 返回值: 无
     public void ShowGuideList()
     {
         if (isPreviewing)
@@ -75,6 +96,12 @@ public class UIBeginnerGuideManager : MonoBehaviour
             ShowGuideList(guideDataList[0]);
         }
     }
+
+    // 描述：播放指定的引导列表
+    // 所属类：UIBeginnerGuideManager
+    // 参数：
+    //     datalist 要播放的引导列表对象，是挂载在UI面板上
+    // 返回值: 无
     public void ShowGuideList(UIBeginnerGuideDataList datalist)
     {
         if (isPreviewing)
@@ -114,6 +141,13 @@ public class UIBeginnerGuideManager : MonoBehaviour
             StartNextGuide();
         }
     }
+
+    // 描述：播放指定的引导列表中的指定ID
+    // 所属类：UIBeginnerGuideManager
+    // 参数：
+    //     datalist 要播放的引导列表对象
+    //     id 下次播放引导时播放的id
+    // 返回值: 无
     public void ShowGuideList(UIBeginnerGuideDataList datalist, string guideID)
     {
         if (isPreviewing)
@@ -166,6 +200,11 @@ public class UIBeginnerGuideManager : MonoBehaviour
             StartCoroutine(RegisterAutoFinish(curGuideData.guideFinishDuration, curGuideData.guideID));
         }
     }
+    // 描述：结束某个ID的引导（若当前引导不是该ID，则该函数无效）
+    // 所属类：UIBeginnerGuideManager
+    // 参数：
+    //     guideID 要结束的引导ID
+    // 返回值: 无
     public void FinishGuide(string guideId)
     {
         if (curGuideData.guideID == guideId)
@@ -175,6 +214,11 @@ public class UIBeginnerGuideManager : MonoBehaviour
             StartNextGuide();
         }
     }
+
+    // 描述：结束当前引导
+    // 所属类：UIBeginnerGuideManager
+    // 参数：无
+    // 返回值: 无
     public void FinishGuide()
     {
         curGuide.Finish();
@@ -189,8 +233,9 @@ public class UIBeginnerGuideManager : MonoBehaviour
     }
     private void StartNextGuide()
     {
+       
         int index = curGuideList.guideDataList.IndexOf(curGuideData);
-
+        Debug.Log($"开启下个引导，当前id:{curGuideData.guideID},idx:{index}");
         if (index < curGuideList.guideDataList.Count - 1)
         {
             //一个List没完成,只切换data

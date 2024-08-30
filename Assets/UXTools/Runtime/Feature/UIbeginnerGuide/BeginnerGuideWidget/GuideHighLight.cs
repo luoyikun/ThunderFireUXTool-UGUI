@@ -10,6 +10,7 @@ public enum HighLightType
     Circle,
     Square
 }
+//高亮遮罩脚本
 public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerClickHandler
 {
     private GuideFinishType guideFinishType;
@@ -29,7 +30,7 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
     public Material circleMaterial;
 
     private Vector3[] targetCorners = new Vector3[4];//存储要镂空组件的四个角的数组
-
+    public Button m_btnTarget = null; //目标按钮
     public Vector2 WorldToScreenPoint(Canvas canvas, Vector3 world)
     {
         //把世界坐标转化为屏幕坐标
@@ -76,6 +77,7 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
     public void SetType(GuideFinishType type)
     {
         this.guideFinishType = type;
+        Debug.Log($"设置引导类型{type.ToString()}");
     }
 
     private void SetRectHighLightArea()
@@ -95,27 +97,76 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
         circleMaterial.SetFloat("_SliderY", height);
 
     }
+
+    /// <summary>
+    /// 点击穿透区域,穿透下去，如何驱动引导下一步执行
+    /// </summary>
+    /// <param name="sp"></param>
+    /// <param name="eventCamera"></param>
+    /// <returns>返回false为穿透，true为屏蔽下层点击</returns>
     public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
     {
+        
         if (target == null) { return true; }//点击不了
-        // if (RectTransformUtility.RectangleContainsScreenPoint(target, sp))
-        // {
-        //     return false;
-        // }
+        if (guideFinishType == GuideFinishType.Strong)
+        {
+            //强引导穿透到挖孔区
+            if (RectTransformUtility.RectangleContainsScreenPoint(target, sp))
+            {
+                return false;
+            }
+        }
         return true;
 
 
     }
+    //移除上一个按钮的响应
+    void BtnTargetRemoveListener()
+    {
+        if (m_btnTarget != null)
+        {
+            m_btnTarget.onClick.RemoveListener(() => finish());
+            Debug.Log($"引导移除目标按钮回调-》{m_btnTarget.name}");
+        }
+    }
+
+    void BtnTargetAddListener(GameObject go)
+    {
+        if (guideFinishType == GuideFinishType.Strong)
+        {
+            m_btnTarget = go.GetComponent<Button>();
+            if (m_btnTarget != null)
+            {
+                m_btnTarget.onClick.AddListener(() => finish());
+                Debug.Log($"强引导绑定目标按钮回调-》{m_btnTarget.name}");
+            }
+            else
+            {
+                Debug.LogError($"强引导需要目标具有button-》target{go.name}");
+            }
+
+
+        }
+    }
+    /// <summary>
+    /// 开启下一步
+    /// </summary>
     public void finish()
     {
-        //延迟5秒执行
+        //需要先移除target回调再开启下一步
+        BtnTargetRemoveListener();
         UIBeginnerGuideManager.Instance.FinishGuide(guideID);
+        
     }
     public void SetTarget(GameObject go)
     {
+
+        BtnTargetRemoveListener();
+
         if (go == null)
         {
             target = childObject.GetComponent<RectTransform>();
+            Debug.Log($"设置目标1：{target.name}");
         }
         else
         {
@@ -126,10 +177,13 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
                 childObject.GetComponent<RectTransform>().sizeDelta = new Vector2(go.GetComponent<RectTransform>().rect.width, go.GetComponent<RectTransform>().rect.height);
                 childObject.transform.localScale = go.transform.localScale;
                 target = go.GetComponent<RectTransform>();
+                Debug.Log($"设置目标2：{target.name}");
+                BtnTargetAddListener(go);
             }
             else
             {
                 target = childObject.GetComponent<RectTransform>();
+                Debug.Log($"设置目标3：{target.name}");
             }
         }
         //Debug.Log(target.position);
@@ -150,6 +204,7 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
     {
         guideID = id;
     }
+    //设置目标的4个顶点围起来的范围
     private void InitTarget()
     {
         canvas = transform.GetComponentInParent<Canvas>();
@@ -187,8 +242,10 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
     }
     public void OnPointerClick(PointerEventData data)
     {
-        if (guideFinishType == GuideFinishType.Middle)// || guideFinishType == GuideFinishType.Weak)
+        Debug.Log("OnPointerClick");
+        if (guideFinishType == GuideFinishType.Middle || guideFinishType == GuideFinishType.Weak)
         {
+            //点击任何地方都可以开启下一步
             UIBeginnerGuideManager.Instance.FinishGuide(guideID);
         }
         // else if (guideFinishType == GuideFinishType.Strong)

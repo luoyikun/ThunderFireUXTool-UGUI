@@ -4,10 +4,11 @@ using UnityEngine;
 
 public static class ReddotManager
 {
+    //单个红点的数据
     private sealed class ReddotData
     {
         public ReddotData parent { get; private set; }
-        private List<ReddotData> m_Children;
+        private List<ReddotData> m_Children; //改红点的所有子红点
 
         public string key;
         public bool Show { get; private set; }
@@ -28,6 +29,7 @@ public static class ReddotManager
 
             m_Children.Add(reddot);
             reddot.parent = this;
+            Debug.Log($"增加子节点:cur:{key},child:{reddot.key}");
         }
         public void RemoveChild(ReddotData reddot)
         {
@@ -78,10 +80,12 @@ public static class ReddotManager
             {
                 if (child.Show)
                 {
+                    //只要子节点有一个true，就设置自身，并接着向上找父节点设置
                     SetShown(true, false);
                     return;
                 }
             }
+            //子节点没有为true，设置自身为false
             SetShown(false, false);
         }
 
@@ -90,6 +94,7 @@ public static class ReddotManager
         /// </summary>
         private void SetReddotUIShow()
         {
+            //同个path有多个红点UI对应
             if (s_ReddotDic.TryGetValue(key, out var list) && list != null && list.Count > 0)
             {
                 foreach (var child in list)
@@ -104,6 +109,7 @@ public static class ReddotManager
     /// <summary>
     /// 缓存所有在生命周期中的红点组件
     /// 用来在红点树更新之后重新设置节点时, 查找对应Key的UI对象
+    /// key为path，value 为List<UI>,同个path可控制多个红点UI
     /// </summary>
     private static readonly Dictionary<string, List<Reddot>> s_ReddotDic = new Dictionary<string, List<Reddot>>();
 
@@ -122,6 +128,7 @@ public static class ReddotManager
         if (!list.Contains(reddot))
         {
             list.Add(reddot);
+            Debug.Log($"注册UI进入管理器{key}");
         }
     }
     /// <summary>
@@ -138,6 +145,7 @@ public static class ReddotManager
             if (list.Count == 0)
             {
                 s_ReddotDic.Remove(key);
+                Debug.Log($"取消注册UI进入管理器{key}");
             }
         }
     }

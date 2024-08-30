@@ -95,15 +95,17 @@ public class UIBeginnerGuide : UIBeginnerGuideBase
             guideHighLightData = GetComponentInChildren<GuideHighLightData>();
             guideHighLightData.Load(guideData.guideHighLightData);
             highLightWidget.Init(guideHighLightData);
-            if (guideData.highLightTarget)
-            {
-                guideHighLightData.SetTarget(guideData.highLightTarget);
 
-            }
-            highLightWidget.SetTarget(guideData.highLightTarget);
 
             highLightWidget.SetType(data.guideFinishType);
             highLightWidget.SetID(data.guideID);
+            //应该先设置数据，再设置ui目标
+            highLightWidget.SetTarget(guideData.highLightTarget);
+            if (guideData.highLightTarget)
+            {
+                guideHighLightData.SetTarget(guideData.highLightTarget);
+            }
+
         }
 
         if (!string.IsNullOrEmpty(guideData.gamePadPanelData) && GamePadWidget != null)

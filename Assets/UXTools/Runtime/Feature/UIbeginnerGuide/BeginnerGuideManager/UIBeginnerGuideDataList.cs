@@ -77,6 +77,7 @@ public abstract class GuideWidgetData : MonoBehaviour
 /// <summary>
 /// 以JsonString的形式保存一个Guide中用到的所有的Widget的Data
 /// 临时持有一下需要的TargetGameObject
+/// 一组里面1个引导数据，会聚焦Target
 /// </summary>
 [Serializable]
 public class UIBeginnerGuideData
@@ -133,6 +134,9 @@ public class UIBeginnerGuideData
     public GuideTemplate Template = GuideTemplate.t1;
 }
 
+/// <summary>
+/// 单UI上引导序列。会根据引导类型的不同来决定引导结束的条件，并自动开启组里的下一个引导，直到该引导组中没有引导为止
+/// </summary>
 public class UIBeginnerGuideDataList : MonoBehaviour
 {
     [SerializeField]
