@@ -247,6 +247,8 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
         {
             //点击任何地方都可以开启下一步
             UIBeginnerGuideManager.Instance.FinishGuide(guideID);
+
+            //TODO 如果是弱引导，还需要关闭自动关闭的协程
         }
         // else if (guideFinishType == GuideFinishType.Strong)
         // {

@@ -77,7 +77,7 @@ public class JsonAssetManager
         }
 
         T asset = LoadAssetAtPath<T>(path);
-
+        Debug.Log($"读取json数据path:{path}");
         if (asset == null)
         {
             Debug.LogFormat("Can't Load {0} , Please Check the File", path);

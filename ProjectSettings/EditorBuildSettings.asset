@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/UX_Samples/UIBeginnerGuideSample/UIBeginnerGuideSampleScene1.unity
+    guid: b18f8b7185384eb428ccc020fdda2128
   m_configObjects: {}

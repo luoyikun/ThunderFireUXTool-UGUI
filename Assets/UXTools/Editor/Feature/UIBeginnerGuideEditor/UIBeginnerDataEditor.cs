@@ -123,10 +123,12 @@ namespace ThunderFireUITool
             curY += EditorGUIUtility.singleLineHeight + CustomEditorGUI.propertyInterval;
             if (!useOwnPrefab.boolValue)
             {
+                //引导模板类型GuideTemplate
                 if (templateProperty.intValue == 0)
                 {
                     prefabProperty.objectReferenceValue =
                     AssetDatabase.LoadAssetAtPath<GameObject>("Assets/UXTools/Res/UX-GUI-Feature/BeginnerGuide/Resources/BeginnerGuideTemplate/GuideTemplate_Gesture.prefab");
+                    Debug.Log($"编辑器模式加载新手引导面板GuideTemplate_Gesture");
                 }
                 else if (templateProperty.intValue == 1)
                 {

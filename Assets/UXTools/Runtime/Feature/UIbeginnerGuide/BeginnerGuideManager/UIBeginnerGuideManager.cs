@@ -192,11 +192,13 @@ public class UIBeginnerGuideManager : MonoBehaviour
         curGuideData = data;
 
         var guideGo = Instantiate(curGuideData.guideTemplatePrefab, curGuideList.transform);
+        Debug.Log($"实例化引导面板{curGuideData.guideTemplatePrefab.name}");
         curGuide = guideGo.GetComponent<UIBeginnerGuide>();
         curGuide.Init(curGuideData);
         curGuide.Show();
         if (curGuideData.guideFinishType == GuideFinishType.Weak)
         {
+            //弱引导注册定时取消
             StartCoroutine(RegisterAutoFinish(curGuideData.guideFinishDuration, curGuideData.guideID));
         }
     }
@@ -210,6 +212,10 @@ public class UIBeginnerGuideManager : MonoBehaviour
         if (curGuideData.guideID == guideId)
         {
             curGuide.Finish();
+            //一个引导完成了，删除gameObject，再下一步创建先遮罩
+            //这里会造成频繁的实例化，销毁消耗
+            //因为原版是可以选择模板form，直接用手势模板就行了，一个游戏不需要切换不同模板
+            //复用guideForm
             DestroyImmediate(curGuide.gameObject);
             StartNextGuide();
         }

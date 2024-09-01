@@ -2285,7 +2285,7 @@ MonoBehaviour:
   - guideID: MiddleGuide
     guideFinishType: 1
     guideFinishDuration: 0
-    guideTemplatePrefab: {fileID: 129291512494320572, guid: 14961014bd33abd4a818582f9c84ba81,
+    guideTemplatePrefab: {fileID: 129291512494320572, guid: cb9dc182bed8c52428dfa0309bd9ccc1,
       type: 3}
     guideHighLightData: '{"Saved":true,"anchoredPos":{"x":0.0,"y":0.0,"z":0.0},"offsetMax":{"x":0.0,"y":0.0},"offsetMin":{"x":0.0,"y":0.0},"anchorMin":{"x":0.0,"y":0.0},"anchorMax":{"x":1.0,"y":1.0},"pivot":{"x":0.5,"y":0.5},"Scale":{"x":1.0,"y":1.0,"z":1.0},"Rotation":{"x":0.0,"y":0.0,"z":0.0},"Size":{"x":0.0,"y":0.0},"Open":true,"highLightType":1,"isVague":false,"UseCustomTarget":true,"childPos":{"x":-9.0,"y":-133.0,"z":0.0},"childScale":{"x":1.0,"y":1.0,"z":1.0},"childRot":{"x":0.0,"y":0.0,"z":0.0},"childSize":{"x":388.75439453125,"y":129.1584930419922},"target":{"instanceID":43112}}'
     highLightTarget: {fileID: 403964238}
@@ -2305,7 +2305,7 @@ MonoBehaviour:
     CustomImagesprite: '{"keys":[],"values":[]}'
     CustomImageDatas: '{"keys":["GuideTemplate_Gesture(Clone)"],"values":["{\"m_Material\":{\"instanceID\":0},\"m_Color\":{\"r\":0.0,\"g\":0.0,\"b\":0.0,\"a\":0.0},\"m_RaycastTarget\":false,\"m_RaycastPadding\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"m_Maskable\":true,\"m_OnCullStateChanged\":{\"m_PersistentCalls\":{\"m_Calls\":[]}},\"m_Sprite\":{\"instanceID\":0},\"m_Type\":1,\"m_PreserveAspect\":false,\"m_FillCenter\":true,\"m_FillMethod\":4,\"m_FillAmount\":1.0,\"m_FillClockwise\":true,\"m_FillOrigin\":0,\"m_UseSpriteMesh\":false,\"m_PixelsPerUnitMultiplier\":1.0}"]}'
     UseOwnPrefab: 0
-    Template: 0
+    Template: 1
   - guideID: WeakGuide
     guideFinishType: 2
     guideFinishDuration: 10

@@ -3,3 +3,6 @@
 /Library
 /*.sln
 /Temp
+/.vs
+/PCExe
+/obj
