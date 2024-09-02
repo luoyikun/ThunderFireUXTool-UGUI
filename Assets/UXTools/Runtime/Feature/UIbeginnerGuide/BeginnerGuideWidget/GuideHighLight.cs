@@ -127,6 +127,7 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
         {
             m_btnTarget.onClick.RemoveListener(() => finish());
             Debug.Log($"引导移除目标按钮回调-》{m_btnTarget.name}");
+            m_btnTarget = null;
         }
     }
 
@@ -245,10 +246,15 @@ public class GuideHighLight : GuideWidgetBase, ICanvasRaycastFilter, IPointerCli
         Debug.Log("OnPointerClick");
         if (guideFinishType == GuideFinishType.Middle || guideFinishType == GuideFinishType.Weak)
         {
+            if (guideFinishType == GuideFinishType.Weak)
+            {
+                //如果是弱引导，还需要关闭自动关闭的协程
+                UIBeginnerGuideManager.Instance.StopCorWeekFinish();
+            }
             //点击任何地方都可以开启下一步
             UIBeginnerGuideManager.Instance.FinishGuide(guideID);
 
-            //TODO 如果是弱引导，还需要关闭自动关闭的协程
+           
         }
         // else if (guideFinishType == GuideFinishType.Strong)
         // {

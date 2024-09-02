@@ -30,12 +30,16 @@ public class GuideGestureData : GuideWidgetData
 
     public override string Serialize()
     {
-        UpdateTransformData();
+        if (Open)
+        {
+            UpdateTransformData();
 #if UNITY_EDITOR
-        UpdateDragPos();
+            UpdateDragPos();
 #endif
-        string data = JsonUtility.ToJson(this);
-        return data;
+            string data = JsonUtility.ToJson(this);
+            return data;
+        }
+        return "";
     }
     public void SetCustomGesturePrefab(GameObject prefab)
     {

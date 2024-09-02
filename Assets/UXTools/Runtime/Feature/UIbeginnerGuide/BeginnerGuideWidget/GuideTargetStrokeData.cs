@@ -26,14 +26,18 @@ public class GuideTargetStrokeData : GuideWidgetData
 
     public override string Serialize()
     {
-        UpdateTransformData();
-        // if (targetType == TargetType.Target && targetGameObject != null )
-        // {
-        //     //Pos = transform.position - targetGameObject.transform.position;
+        if (Open)
+        {
+            UpdateTransformData();
+            // if (targetType == TargetType.Target && targetGameObject != null )
+            // {
+            //     //Pos = transform.position - targetGameObject.transform.position;
 
-        // }
-        string data = JsonUtility.ToJson(this);
-        return data;
+            // }
+            string data = JsonUtility.ToJson(this);
+            return data;
+        }
+        return "";
     }
 
     public void SetTarget(GameObject go)

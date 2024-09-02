@@ -10,14 +10,18 @@ public class GuideArrowLineData : GuideWidgetData
     public string smallArrowData;
     public override string Serialize()
     {
-        smallArrowData = "";
-        if ((int)lineType != 0)
+        if (Open)
         {
-            SmallArrowData arrowdata = transform.GetChild((int)lineType).GetChild(0).GetComponent<SmallArrowData>();
-            smallArrowData = arrowdata.Serialize();
+            smallArrowData = "";
+            if ((int)lineType != 0)
+            {
+                SmallArrowData arrowdata = transform.GetChild((int)lineType).GetChild(0).GetComponent<SmallArrowData>();
+                smallArrowData = arrowdata.Serialize();
+            }
+            UpdateTransformData();
+            string data = JsonUtility.ToJson(this);
+            return data;
         }
-        UpdateTransformData();
-        string data = JsonUtility.ToJson(this);
-        return data;
+        return "";
     }
 }

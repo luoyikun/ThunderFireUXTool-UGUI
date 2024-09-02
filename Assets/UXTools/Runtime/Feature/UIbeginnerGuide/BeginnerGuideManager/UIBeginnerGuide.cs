@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using ThunderFireUnityEx;
 
+/// <summary>
+/// 引导面板，包含高亮，强调，手势，文本等组件设置。例如GuideTemplate_Gesture 预制体
+/// </summary>
 public class UIBeginnerGuide : UIBeginnerGuideBase
 {
     public GuideHighLight highLightWidget;
@@ -23,6 +26,7 @@ public class UIBeginnerGuide : UIBeginnerGuideBase
     private GuideArrowLineData guideArrowLineData;
     private GuideTargetStrokeData targetStrokeData;
     private List<GuideSelfDefinedData> selfDefinedDataList;
+    bool m_isInit = false;
 #if UNITY_EDITOR
     public void EditorInit()
     {
@@ -36,22 +40,58 @@ public class UIBeginnerGuide : UIBeginnerGuideBase
     }
 #endif
 
+    public void Awake()
+    {
+        InitDataComp();
+    }
+
+    //初始化数据控件，防止每次都需要找
+    public void InitDataComp()
+    {
+        if (m_isInit == false)
+        {
+            guideTextData = GetComponentInChildren<GuideTextData>(true);
+            guideGestureData = GetComponentInChildren<GuideGestureData>(true);
+
+            gamePadData = GetComponentInChildren<GuideGamePadData>(true);
+            targetStrokeData = GetComponentInChildren<GuideTargetStrokeData>(true);
+            guideArrowLineData = GetComponentInChildren<GuideArrowLineData>(true);
+            guideHighLightData = GetComponentInChildren<GuideHighLightData>(true);
+
+            m_isInit = true;
+        }
+    }
     public override void Init(UIBeginnerGuideData data)
     {
         base.Init(data);
-
-        if (!string.IsNullOrEmpty(guideData.guideTextPanelData) && textWidget != null)
+        InitDataComp();
+        Debug.Log($"初始化引导数据：{data.guideID}");
+        //文本
+        if (textWidget != null)
         {
-            guideTextData = GetComponentInChildren<GuideTextData>();
-            guideTextData.Load(guideData.guideTextPanelData);
-            textWidget.Init(guideTextData);
+            if (!string.IsNullOrEmpty(guideData.guideTextPanelData))
+            {
+                textWidget.gameObject.SetActive(true);
+                Debug.Log($"引导文本{guideData.guideTextPanelData}");
+                //guideTextData = GetComponentInChildren<GuideTextData>(true);
+                guideTextData.Load(guideData.guideTextPanelData);
+                textWidget.Init(guideTextData);
+            }
+            else
+            {
+                textWidget.gameObject.SetActive(false);
+            }
         }
 
+
+        //手势
         if (gestureWidget != null)
         {
             if (!string.IsNullOrEmpty(guideData.guideGesturePanelData))
             {
-                guideGestureData = GetComponentInChildren<GuideGestureData>();
+                gestureWidget.gameObject.SetActive(true);
+                Debug.Log($"引导手势{guideData.guideGesturePanelData}");
+                //guideGestureData = GetComponentInChildren<GuideGestureData>(true);
                 guideGestureData.Load(guideData.guideGesturePanelData);
                 guideGestureData.SetCustomGesturePrefab(guideData.GestureObject);
                 guideGestureData.SetTarget(guideData.selectedObject);
@@ -60,60 +100,92 @@ public class UIBeginnerGuide : UIBeginnerGuideBase
             }
             else
             {
-                gestureWidget.Init(null);
+                gestureWidget.gameObject.SetActive(false);
+                //gestureWidget.Init(null);
             }
         }
 
-        if (!string.IsNullOrEmpty(guideData.gamePadPanelData) && GamePadWidget != null)
+        //游戏面板
+        if (GamePadWidget != null)
         {
-            gamePadData = GetComponentInChildren<GuideGamePadData>();
-            gamePadData.Load(guideData.gamePadPanelData);
-            //Todo init
-        }
-
-        if (!string.IsNullOrEmpty(guideData.targetStrokeData) && targetStrokeWidget != null)
-        {
-            targetStrokeData = GetComponentInChildren<GuideTargetStrokeData>();
-            targetStrokeData.Load(guideData.targetStrokeData);
-            if (targetStrokeData.targetType == TargetType.Target && guideData.strokeTarget)
+            if (!string.IsNullOrEmpty(guideData.gamePadPanelData))
             {
-                targetStrokeData.SetTarget(guideData.strokeTarget);
-                targetStrokeWidget.SetTarget(guideData.strokeTarget);
+                GamePadWidget.gameObject.SetActive(true);
+                Debug.Log($"引导游戏面板{guideData.gamePadPanelData}");
+                //gamePadData = GetComponentInChildren<GuideGamePadData>(true);
+                gamePadData.Load(guideData.gamePadPanelData);
+                GamePadWidget.Init(gamePadData);
             }
-            targetStrokeWidget.Init(targetStrokeData);
+            else {
+                GamePadWidget.gameObject.SetActive(false);
+            }
         }
 
-        if (!string.IsNullOrEmpty(guideData.guideArrowLineData) && arrowLineWidget != null)
+        //强调框
+        if (targetStrokeWidget != null)
         {
-            guideArrowLineData = GetComponentInChildren<GuideArrowLineData>();
-            guideArrowLineData.Load(guideData.guideArrowLineData);
-            arrowLineWidget.Init(guideArrowLineData);
-        }
-
-        if (!string.IsNullOrEmpty(guideData.guideHighLightData) && highLightWidget != null)
-        {
-            guideHighLightData = GetComponentInChildren<GuideHighLightData>();
-            guideHighLightData.Load(guideData.guideHighLightData);
-            highLightWidget.Init(guideHighLightData);
-
-
-            highLightWidget.SetType(data.guideFinishType);
-            highLightWidget.SetID(data.guideID);
-            //应该先设置数据，再设置ui目标
-            highLightWidget.SetTarget(guideData.highLightTarget);
-            if (guideData.highLightTarget)
+            if (!string.IsNullOrEmpty(guideData.targetStrokeData))
             {
-                guideHighLightData.SetTarget(guideData.highLightTarget);
+                //Debug.Log($"引导强调框{guideData.targetStrokeData}");
+                //targetStrokeData = GetComponentInChildren<GuideTargetStrokeData>(true);
+                targetStrokeWidget.gameObject.SetActive(true);
+                targetStrokeWidget.SetGuideData(guideData);
+                targetStrokeData.Load(guideData.targetStrokeData);
+                if (targetStrokeData.targetType == TargetType.Target && guideData.strokeTarget)
+                {
+                    targetStrokeData.SetTarget(guideData.strokeTarget);
+                    targetStrokeWidget.SetTarget(guideData.strokeTarget);
+                }
+                targetStrokeWidget.Init(targetStrokeData);
             }
-
+            else
+            {
+                targetStrokeWidget.gameObject.SetActive(false);
+            }
         }
 
-        if (!string.IsNullOrEmpty(guideData.gamePadPanelData) && GamePadWidget != null)
+        if (arrowLineWidget != null)
         {
-            gamePadData = GetComponentInChildren<GuideGamePadData>();
-            gamePadData.Load(guideData.gamePadPanelData);
-            GamePadWidget.Init(gamePadData);
+            if (!string.IsNullOrEmpty(guideData.guideArrowLineData))
+            {
+                arrowLineWidget.gameObject.SetActive(true);
+                //guideArrowLineData = GetComponentInChildren<GuideArrowLineData>(true);
+                guideArrowLineData.Load(guideData.guideArrowLineData);
+                arrowLineWidget.Init(guideArrowLineData);
+            }
+            else
+            {
+                arrowLineWidget.gameObject.SetActive(false);
+            }
         }
+
+        //高亮
+        if (highLightWidget != null)
+        {
+            if (!string.IsNullOrEmpty(guideData.guideHighLightData))
+            {
+                Debug.Log($"引导高亮{guideData.guideHighLightData}");
+                highLightWidget.gameObject.SetActive(true);
+                guideHighLightData.Load(guideData.guideHighLightData);
+                highLightWidget.Init(guideHighLightData);
+
+
+                highLightWidget.SetType(data.guideFinishType);
+                highLightWidget.SetID(data.guideID);
+                //应该先设置数据，再设置ui目标。如果是强调型，这里不应该执行
+                highLightWidget.SetTarget(guideData.highLightTarget);
+                if (guideData.highLightTarget)
+                {
+                    guideHighLightData.SetTarget(guideData.highLightTarget);
+                }
+
+            }
+            else
+            {
+                highLightWidget.gameObject.SetActive(false);
+            }
+        }
+
 
         if (guideData.GuideSelfDefinedData != null && guideData.GuideSelfDefinedData.Count != 0)
         {

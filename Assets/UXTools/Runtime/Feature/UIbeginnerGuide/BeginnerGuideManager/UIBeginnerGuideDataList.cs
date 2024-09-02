@@ -93,7 +93,7 @@ public class UIBeginnerGuideData
     public GameObject guideTemplatePrefab;
 
     //黑幕镂空数据
-    public string guideHighLightData = "";
+    public string guideHighLightData = ""; //
     //需要镂空的UI控件
     public GameObject highLightTarget;
 

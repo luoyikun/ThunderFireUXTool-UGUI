@@ -10,11 +10,15 @@ public class GuideSelfDefinedData : GuideWidgetData
 
     public override string Serialize()
     {
-        UpdateTransformData();
+        if (Open)
+        {
+            UpdateTransformData();
 
-        text = GetComponent<Text>().text;
+            text = GetComponent<Text>().text;
 
-        string data = JsonUtility.ToJson(this);
-        return data;
+            string data = JsonUtility.ToJson(this);
+            return data;
+        }
+        return "";
     }
 }

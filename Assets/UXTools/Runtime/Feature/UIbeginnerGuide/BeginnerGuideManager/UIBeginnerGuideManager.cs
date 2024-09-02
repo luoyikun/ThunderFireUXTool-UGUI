@@ -23,7 +23,7 @@ public class UIBeginnerGuideManager : MonoBehaviour
     private UIBeginnerGuideData curGuideData; //一组引导中的一个，记录UIBeginnerGuide中的各种数据。包括引导ID、引导类型、引导时长、引导模板，以及UIBeginnerGuide中包含的GuideWidgetData
     private UIBeginnerGuide curGuide;//一个引导的界面模板，界面上包含多种不同的GuideWidget
     private string targetID;
-
+    Coroutine m_corWeekFinish; //弱引导的定时关闭协程
     // private bool guideShowing = false;
     // private bool GuideShowing { get { return guideShowing; } }
     private void Awake()
@@ -36,6 +36,14 @@ public class UIBeginnerGuideManager : MonoBehaviour
         instance = null;
     }
 
+    public void StopCorWeekFinish()
+    {
+        if (m_corWeekFinish != null)
+        {
+            StopCoroutine(m_corWeekFinish);
+            m_corWeekFinish = null;
+        }
+    }
     // 描述：设置下一个引导列表从名字为id的引导项开始引导
     // 所属类：UIBeginnerGuideManager
     // 参数：
@@ -190,16 +198,26 @@ public class UIBeginnerGuideManager : MonoBehaviour
     private void ShowGuide(UIBeginnerGuideData data)
     {
         curGuideData = data;
+        if (curGuide == null)
+        {
+            //TODO，实例化到最顶层Canvas。避免飘字，跑马灯等最顶层的还在模板之上显示
+            //var guideGo = Instantiate(curGuideData.guideTemplatePrefab, curGuideList.transform);
+            var guideGo = Instantiate(curGuideData.guideTemplatePrefab, transform);
+            Debug.Log($"实例化引导面板{curGuideData.guideTemplatePrefab.name}");
+            curGuide = guideGo.GetComponent<UIBeginnerGuide>();
+        }
+        else
+        {
+            SetGuideObjActive(true);
+        }
 
-        var guideGo = Instantiate(curGuideData.guideTemplatePrefab, curGuideList.transform);
-        Debug.Log($"实例化引导面板{curGuideData.guideTemplatePrefab.name}");
-        curGuide = guideGo.GetComponent<UIBeginnerGuide>();
         curGuide.Init(curGuideData);
         curGuide.Show();
         if (curGuideData.guideFinishType == GuideFinishType.Weak)
         {
             //弱引导注册定时取消
-            StartCoroutine(RegisterAutoFinish(curGuideData.guideFinishDuration, curGuideData.guideID));
+            StopCorWeekFinish();
+            m_corWeekFinish = StartCoroutine(RegisterAutoFinish(curGuideData.guideFinishDuration, curGuideData.guideID));
         }
     }
     // 描述：结束某个ID的引导（若当前引导不是该ID，则该函数无效）
@@ -216,11 +234,19 @@ public class UIBeginnerGuideManager : MonoBehaviour
             //这里会造成频繁的实例化，销毁消耗
             //因为原版是可以选择模板form，直接用手势模板就行了，一个游戏不需要切换不同模板
             //复用guideForm
-            DestroyImmediate(curGuide.gameObject);
+            //DestroyImmediate(curGuide.gameObject);
+            SetGuideObjActive(false);
             StartNextGuide();
         }
     }
 
+    public void SetGuideObjActive(bool isActive)
+    {
+        if (curGuide != null && curGuide.gameObject != null)
+        {
+            curGuide.gameObject.SetActive(isActive);
+        }
+    }
     // 描述：结束当前引导
     // 所属类：UIBeginnerGuideManager
     // 参数：无
@@ -228,7 +254,8 @@ public class UIBeginnerGuideManager : MonoBehaviour
     public void FinishGuide()
     {
         curGuide.Finish();
-        DestroyImmediate(curGuide.gameObject);
+        //DestroyImmediate(curGuide.gameObject);
+        SetGuideObjActive(false);
         StartNextGuide();
     }
     private IEnumerator RegisterAutoFinish(float duration, string ID)
@@ -261,7 +288,8 @@ public class UIBeginnerGuideManager : MonoBehaviour
             {
                 //也没有其他的guideDataList了,结束引导,等待新的guidedatalist
                 //guideShowing = false;
-                curGuide = null;
+                //curGuide = null;
+                SetGuideObjActive(false);
                 curGuideData = null;
             }
         }

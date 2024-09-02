@@ -18,13 +18,19 @@ public class GuideHighLightData : GuideWidgetData
 
     public override string Serialize()
     {
-        childPos = transform.GetChild(0).localPosition;
-        childRot = transform.GetChild(0).eulerAngles;
-        childScale = transform.GetChild(0).localScale;
-        childSize = transform.GetChild(0).GetComponent<RectTransform>().sizeDelta;
-        UpdateTransformData();
-        string data = JsonUtility.ToJson(this);
-        return data;
+        if (Open)
+        {
+            childPos = transform.GetChild(0).localPosition;
+            childRot = transform.GetChild(0).eulerAngles;
+            childScale = transform.GetChild(0).localScale;
+            childSize = transform.GetChild(0).GetComponent<RectTransform>().sizeDelta;
+            UpdateTransformData();
+            string data = JsonUtility.ToJson(this);
+            Debug.Log($"高亮数据保存{data}");
+            return data;
+        }
+        Debug.Log($"高亮数据保存空");
+        return "";
         //throw new System.NotImplementedException();
     }
     public void SetTarget(GameObject go)

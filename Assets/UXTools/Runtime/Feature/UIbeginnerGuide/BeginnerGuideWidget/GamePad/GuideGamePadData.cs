@@ -18,8 +18,10 @@ public class GuideGamePadData : GuideWidgetData
 
     public override string Serialize()
     {
+
 #if USE_InputSystem
-        UpdateTransformData();
+        if (Open)
+        {UpdateTransformData();
 
         List<string> actionList = new List<string>();
         foreach (var item in guideList)
@@ -50,6 +52,8 @@ public class GuideGamePadData : GuideWidgetData
 
         string data = JsonUtility.ToJson(this);
         return data;
+        }
+        return "";
 #else
         return "";
 #endif

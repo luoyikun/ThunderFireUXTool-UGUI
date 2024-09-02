@@ -21,18 +21,22 @@ public class GuideTextData : GuideWidgetData
 
     public override string Serialize()
     {
-        UpdateTransformData();
-        if (textBgStyle == TextBgStyle.Default)
+        if (Open)
         {
-            guideTextContent = GetComponent<GuideText>().defaultContent.GetComponent<Text>().text;
-        }
-        else
-        {
-            guideTextTitle = GetComponent<GuideText>().withTitleTitle.GetComponent<Text>().text;
-            guideTextContent = GetComponent<GuideText>().withTitleContent.GetComponent<Text>().text;
-        }
+            UpdateTransformData();
+            if (textBgStyle == TextBgStyle.Default)
+            {
+                guideTextContent = GetComponent<GuideText>().defaultContent.GetComponent<Text>().text;
+            }
+            else
+            {
+                guideTextTitle = GetComponent<GuideText>().withTitleTitle.GetComponent<Text>().text;
+                guideTextContent = GetComponent<GuideText>().withTitleContent.GetComponent<Text>().text;
+            }
 
-        string data = JsonUtility.ToJson(this);
-        return data;
+            string data = JsonUtility.ToJson(this);
+            return data;
+        }
+        return "";
     }
 }
