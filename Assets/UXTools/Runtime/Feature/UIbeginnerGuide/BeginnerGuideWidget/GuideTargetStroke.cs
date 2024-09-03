@@ -58,7 +58,7 @@ public class GuideTargetStroke : GuideWidgetBase
     {
         if (m_btnTarget != null)
         {
-            m_btnTarget.onClick.RemoveListener(() => finish());
+            m_btnTarget.onClick.RemoveListener(finish);
             Debug.Log($"引导移除目标按钮回调-》{m_btnTarget.name}");
             m_btnTarget = null;
         }
@@ -71,7 +71,7 @@ public class GuideTargetStroke : GuideWidgetBase
             m_btnTarget = go.GetComponent<Button>();
             if (m_btnTarget != null)
             {
-                m_btnTarget.onClick.AddListener(() => finish());
+                m_btnTarget.onClick.AddListener(finish);
                 Debug.Log($"强引导绑定目标按钮回调-》{m_btnTarget.name}");
             }
             else
